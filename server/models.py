@@ -12,6 +12,18 @@ class Author(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
     # Add validators 
+    @validates('name')
+    def has_name(self, key, val):
+        if len(val) == 0 or hasattr(Author, val):
+            raise ValueError('author must have a name and it must be unique')
+        return val
+
+    @validates('phone_number')
+    def ten_digits(self, key, num):
+        if len(num) != 10:
+            raise ValueError('phone number must be exactly 10 digits long')
+        return num
+        
 
     def __repr__(self):
         return f'Author(id={self.id}, name={self.name})'
@@ -28,7 +40,29 @@ class Post(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
     # Add validators  
+    @validates('content')
+    def content_length(self, key, content):
+        if content.len() < 250:
+            raise ValueError('post must be at least 250 characters long')
+        return content
+    
+    @validates('summary')
+    def sum_length(self, key, summary):
+        if len(summary) > 250:
+            raise ValueError('post summary must be less than 250 characters')
+        return summary
+    
+    @validates('category')
+    def check_cat(self, key, cat):
+        if cat != 'Fiction' or cat != 'Non-Fiction':
+            raise ValueError('category must be either Fiction or Non-Fiction')
+        return cat
 
+    @validates('title')
+    def click_bait(self, key, title):
+        if ("Won't Believe") or ("Top") or ("Secret") or ("Guess") not in title:
+            raise ValueError("title must include either Won't Believe, Secret, Top, or Guess")
+        return title
 
     def __repr__(self):
         return f'Post(id={self.id}, title={self.title} content={self.content}, summary={self.summary})'
