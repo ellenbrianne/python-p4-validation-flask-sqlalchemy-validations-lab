@@ -7,7 +7,7 @@ class Author(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     name= db.Column(db.String, unique=True, nullable=False)
-    phone_number = db.Column(db.String)
+    phone_number = db.Column(db.String, db.CheckConstraint('phone_number == 10'))
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
@@ -33,7 +33,7 @@ class Post(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
-    content = db.Column(db.String)
+    content = db.Column(db.String, db.CheckConstraint('content > 250'))
     category = db.Column(db.String)
     summary = db.Column(db.String)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
