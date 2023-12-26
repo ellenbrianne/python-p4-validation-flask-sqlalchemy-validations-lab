@@ -14,8 +14,10 @@ class Author(db.Model):
     # Add validators 
     @validates('name')
     def validates_name(self, key, name):
-        if not name:
-            raise ValueError('author must have a name')
+        existing_names = [a.name.lower() for a in Author.query.all()]
+
+        if not name or name.lower() in existing_names:
+            raise ValueError('author must have a name & it must be unique')
         else:
             return name
     
@@ -25,6 +27,7 @@ class Author(db.Model):
             return phone_number
         else:
             raise ValueError('phone number must be 10 digits')
+    
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -40,7 +43,7 @@ class Post(db.Model):
     # Add validators  
     @validates('title')
     def validates_title(self, key, title):
-        
+
         click_bait = ["Won't Believe", "Secret", "Top", "Guess"]
 
         if not title or not any(x in title for x in click_bait):
