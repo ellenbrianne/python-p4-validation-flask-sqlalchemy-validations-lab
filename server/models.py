@@ -40,8 +40,11 @@ class Post(db.Model):
     # Add validators  
     @validates('title')
     def validates_title(self, key, title):
-        if not title:
-            raise ValueError('post must have a title')
+        
+        click_bait = ["Won't Believe", "Secret", "Top", "Guess"]
+
+        if not title or not any(x in title for x in click_bait):
+            raise ValueError('post must have a title and must contain a clickbait term')
         else:
             return title
         
