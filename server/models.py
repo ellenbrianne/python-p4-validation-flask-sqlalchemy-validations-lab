@@ -12,20 +12,19 @@ class Author(db.Model):
     updated_at = db.Column(db.DateTime, onupdate=db.func.now())
 
     # Add validators 
-    # @validates('name')
-    # def has_name(self, key, name):
-    #     if not name:
-    #         raise ValueError('author must have a name')
-    #     return name
+    @validates('name')
+    def validates_name(self, key, name):
+        if not name:
+            raise ValueError('author must have a name')
+        else:
+            return name
     
     @validates('phone_number')
-    def check_num(self, key, num):
-        if int(num) != 10:
-            raise ValueError('phone number must be exactly 10 digits')
-        return num
-
-    def __repr__(self):
-        return f'Author(id={self.id}, name={self.name})'
+    def validates_phone_number(self, key, phone_number):
+        if phone_number.isdigit() and len(phone_number) == 10:
+            return phone_number
+        else:
+            raise ValueError('phone number must be 10 digits')
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -40,29 +39,33 @@ class Post(db.Model):
 
     # Add validators  
     @validates('title')
-    def has_title(self, key, title):
+    def validates_title(self, key, title):
         if not title:
             raise ValueError('post must have a title')
-        return title
-    
+        else:
+            return title
+        
     @validates('content')
-    def con_length(self, key, content):
-        if len(content) < 250:
+    def validates_content(self, key, content):
+        if len(content.replace(" ", "")) < 250:
             raise ValueError('content must be at least 250 characters')
-        return content
+        else:
+            return content
     
     @validates('summary')
-    def sum_length(self, key, summary):
-        if len(summary) > 250:
-            raise ValueError('summary must not be longer than 250 characters')
-        return summary
-    
+    def validates_summary(self, key, summary):
+        if len(summary.replace(" ", "")) > 250:
+            raise ValueError('summary must be 250 characters or less')
+        else: 
+            return summary
+        
     @validates('category')
-    def correct_cat(self, key, category):
-        if category != "Fiction" or category != "Non-Fiction":
-            raise ValueError('category must be either Fiction or Non-Fiction')
-        return category
-
+    def validates_category(self, key, category):
+        accepted = ['Fiction', 'Non-Fiction']
+        if category not in accepted:
+            raise ValueError('category must be Fiction or Non-Fiction')
+        else:
+            return category
 
     def __repr__(self):
         return f'Post(id={self.id}, title={self.title} content={self.content}, summary={self.summary})'
