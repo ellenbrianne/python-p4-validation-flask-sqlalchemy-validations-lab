@@ -16,7 +16,7 @@ class Author(db.Model):
     def validates_name(self, key, name):
         existing_names = [a.name.lower() for a in Author.query.all()]
 
-        if not name or name.lower() in existing_names:
+        if name == "" or name.lower() in existing_names:
             raise ValueError('author must have a name & it must be unique')
         else:
             return name
